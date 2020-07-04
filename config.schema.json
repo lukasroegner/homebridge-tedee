@@ -32,7 +32,6 @@
                             "type": "string",
                             "required": true,
                             "placeholder": "Device name from the app",
-                            "format": "email",
                             "description": "The name of the lock. This name has to match the name that is configured in the Tedee app."
                         },
                         "unlatchFromUnlockedToUnlocked": {
