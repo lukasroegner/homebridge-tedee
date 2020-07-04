@@ -16,13 +16,15 @@
   },
   "devDependencies": {
     "@types/node": "^10",
-    "typescript": "^3.7.5",
-    "rimraf": "^3.0.0",
-    "hap-nodejs": "0.5.0"
+    "typescript": "3.8.3",
+    "rimraf": "3.0.2",
+    "hap-nodejs": "0.5.0",
+    "@types/qs": "6.5.1"
   },
   "dependencies": {
     "homebridge-framework": "1.0.6",
-    "axios": "^0.19.2"
+    "axios": "^0.19.2",
+    "qs": "6.9.4"
   },
   "bugs": {
     "url": "https://github.com/lukasroegner/homebridge-tedee/issues"

@@ -91,7 +91,7 @@ export class Platform extends HomebridgePlatform<Configuration> {
         this.configuration.apiUri = 'https://api.tedee.com/api/v1.9';
         this.configuration.maximumApiRetry = 3;
         this.configuration.apiRetryInterval = 5000;
-        this.configuration.updateInterval = this.configuration.updateInterval || 60;
+        this.configuration.updateInterval = this.configuration.updateInterval || 30;
 
         // Initializes the client
         this._apiClient = new TedeeApiClient(this);
@@ -123,7 +123,7 @@ export class Platform extends HomebridgePlatform<Configuration> {
         }
 
         // Initializes the background updates
-        this.updateHandle = setTimeout(() => this.updateAsync(), this.configuration.updateInterval * 1000);
+        this.updateHandle = setInterval(() => this.updateAsync(), this.configuration.updateInterval * 1000);
     }
 
     /**
@@ -132,7 +132,7 @@ export class Platform extends HomebridgePlatform<Configuration> {
     public destroy() {
         this.logger.info(`Shutting down timers...`);
         if (this.updateHandle) {
-            clearTimeout(this.updateHandle);
+            clearInterval(this.updateHandle);
             this.updateHandle = null;
         }
     }

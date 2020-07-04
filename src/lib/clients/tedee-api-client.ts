@@ -1,5 +1,6 @@
 
 import axios from 'axios';
+import qs from 'qs';
 
 import { Platform } from '../platform';
 import { TokenResponse } from './models/token-response';
@@ -35,7 +36,7 @@ export class TedeeApiClient {
         this.platform.logger.debug(`Getting access token...`);
 
         // Checks if the current access token is expired
-        if (this.expirationDateTime && this.expirationDateTime.getTime() < new Date().getTime() - (60 * 1000)) {
+        if (this.expirationDateTime && this.expirationDateTime.getTime() < new Date().getTime() - (120 * 1000)) {
             this.expirationDateTime = null;
             this.accessToken = null;
         }
@@ -53,13 +54,17 @@ export class TedeeApiClient {
         
         // Sends the HTTP request to get a new access token
         try {
-            const response = await axios.post<TokenResponse>(this.platform.configuration.tokenUri, {
+            const response = await axios.post<TokenResponse>(this.platform.configuration.tokenUri, qs.stringify({
                 grant_type: 'password',
                 username:  this.platform.configuration.emailAddress,
                 password: this.platform.configuration.password,
                 scope: 'openid 02106b82-0524-4fd3-ac57-af774f340979',
                 client_id: '02106b82-0524-4fd3-ac57-af774f340979',
                 response_type: 'token id_token'
+            }), {
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                }
             });
 
             // Stores the access token
@@ -105,6 +110,7 @@ export class TedeeApiClient {
                     Authorization: `Bearer ${accessToken}`
                 } 
             });
+            this.platform.logger.debug(JSON.stringify(response.data));
             this.platform.logger.debug(`Locks received from API.`);
             return response.data.result;
         } catch (e) {

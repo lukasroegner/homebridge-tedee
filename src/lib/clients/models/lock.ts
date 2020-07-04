@@ -1,6 +1,7 @@
 
 import { LockProperties } from './lock-properties';
 import { SoftwareVersion } from './software-version';
+import { DeviceSettings } from './device-settings';
 
 /**
  * Represents the HTTP API model for a single lock.
@@ -21,6 +22,11 @@ export interface Lock {
      * Gets or sets the serial number of the lock.
      */
     serialNumber: string;
+
+    /**
+     * Gets or sets the device settings.
+     */
+    deviceSettings: DeviceSettings;
 
     /**
      * Gets or sets the properties of the lock.
