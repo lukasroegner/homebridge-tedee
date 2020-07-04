@@ -1,0 +1,40 @@
+{
+  "name": "homebridge-tedee",
+  "version": "0.1.0",
+  "author": "Lukas Rögner",
+  "homepage": "https://github.com/lukasroegner/homebridge-tedee",
+  "description": "Homebridge plugin for the smart lock Tedee.",
+  "license": "MIT",
+  "keywords": [
+    "homebrige",
+    "tedee",
+    "homebridge-plugin"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lukasroegner/homebridge-tedee.git"
+  },
+  "devDependencies": {
+    "@types/node": "^10",
+    "typescript": "^3.7.5",
+    "rimraf": "^3.0.0",
+    "hap-nodejs": "0.5.0"
+  },
+  "dependencies": {
+    "homebridge-framework": "1.0.6",
+    "axios": "^0.19.2"
+  },
+  "bugs": {
+    "url": "https://github.com/lukasroegner/homebridge-tedee/issues"
+  },
+  "main": "dist/index.js",
+  "scripts": {
+    "debug": "rimraf dist/ && tsc && homebridge -D -U . -P .",
+    "build": "rimraf dist/ && tsc",
+    "prepublishOnly": "npm run build"
+  },
+  "engines": {
+    "node": ">=10",
+    "homebridge": ">=0.2"
+  }
+}

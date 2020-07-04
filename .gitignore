@@ -1,0 +1,14 @@
+
+# Dependency directories
+node_modules
+
+# Optional npm cache directory
+.npm
+
+# Build output
+dist
+
+# Local configuration
+config.json
+persist
+accessories
