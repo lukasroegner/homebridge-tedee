@@ -72,12 +72,25 @@ export class TedeeLockController {
                             this.latchTargetStateCharacteristic.value = Homebridge.Characteristics.LockCurrentState.UNSECURED;
                         }
 
-                        // Sends the pull spring command to the API
-                        platform.logger.info(`[${deviceConfiguration.name}] Pull spring via HomeKit requested.`);
-                        try {
-                            await platform.apiClient.pullSpringAsync(this.lock.id);
-                        } catch (e) {
-                            platform.logger.warn(`[${deviceConfiguration.name}] Pull spring via HomeKit`);
+                        // Checks if the door is half-closed, in this case, an open command has to be used instead of the pull spring command
+                        if (this.lock.lockProperties.state === 3) {
+
+                            // Sends the open command to the API
+                            platform.logger.info(`[${deviceConfiguration.name}] Open via HomeKit requested.`);
+                            try {
+                                await platform.apiClient.openAsync(this.lock.id);
+                            } catch (e) {
+                                platform.logger.warn(`[${deviceConfiguration.name}] Failed to open via HomeKit`);
+                            }
+                        } else {
+
+                            // Sends the pull spring command to the API
+                            platform.logger.info(`[${deviceConfiguration.name}] Pull spring via HomeKit requested.`);
+                            try {
+                                await platform.apiClient.pullSpringAsync(this.lock.id);
+                            } catch (e) {
+                                platform.logger.warn(`[${deviceConfiguration.name}] Pull spring via HomeKit`);
+                            }
                         }
                     }
                 }
@@ -142,12 +155,25 @@ export class TedeeLockController {
                 // Sets the target state of the lock to unsecured, as both should be displayed as open
                 this.lockTargetStateCharacteristic.value = Homebridge.Characteristics.LockTargetState.UNSECURED;
 
-                // Sends the pull spring command to the API
-                platform.logger.info(`[${deviceConfiguration.name}] Pull spring via HomeKit requested.`);
-                try {
-                    await platform.apiClient.pullSpringAsync(this.lock.id);
-                } catch (e) {
-                    platform.logger.warn(`[${deviceConfiguration.name}] Pull spring via HomeKit`);
+                // Checks if the door is half-closed, in this case, an open command has to be used instead of the pull spring command
+                if (this.lock.lockProperties.state === 3) {
+
+                    // Sends the open command to the API
+                    platform.logger.info(`[${deviceConfiguration.name}] Open via HomeKit requested.`);
+                    try {
+                        await platform.apiClient.openAsync(this.lock.id);
+                    } catch (e) {
+                        platform.logger.warn(`[${deviceConfiguration.name}] Failed to open via HomeKit`);
+                    }
+                } else {
+
+                    // Sends the pull spring command to the API
+                    platform.logger.info(`[${deviceConfiguration.name}] Pull spring via HomeKit requested.`);
+                    try {
+                        await platform.apiClient.pullSpringAsync(this.lock.id);
+                    } catch (e) {
+                        platform.logger.warn(`[${deviceConfiguration.name}] Pull spring via HomeKit`);
+                    }
                 }
 
                 // Stops the operation, requests updates for the next seconds
