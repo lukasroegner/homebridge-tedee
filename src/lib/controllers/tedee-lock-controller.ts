@@ -260,8 +260,8 @@ export class TedeeLockController {
 
             // Half-closed
             case 3:
-                this.lockCurrentStateCharacteristic.value = Homebridge.Characteristics.LockCurrentState.SECURED;
-                this.lockTargetStateCharacteristic.value = Homebridge.Characteristics.LockTargetState.SECURED;
+                this.lockCurrentStateCharacteristic.value = Homebridge.Characteristics.LockCurrentState.UNSECURED;
+                this.lockTargetStateCharacteristic.value = Homebridge.Characteristics.LockTargetState.UNSECURED;
                 break;
 
             // Opening
