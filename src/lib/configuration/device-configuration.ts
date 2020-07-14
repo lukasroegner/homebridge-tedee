@@ -20,6 +20,11 @@ export interface DeviceConfiguration {
     unlatchLock: boolean;
 
     /**
+     * Gets or sets a value that determines whether the unlock actions are supported.
+     */
+    disableUnlock: boolean;
+
+    /**
      * Gets or sets the default lock name.
      */
     defaultLockName: string;

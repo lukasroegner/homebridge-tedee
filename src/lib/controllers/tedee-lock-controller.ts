@@ -44,14 +44,22 @@ export class TedeeLockController {
         this.lockCurrentStateCharacteristic = lockService.useCharacteristic<number>(Homebridge.Characteristics.LockCurrentState);
         this.lockTargetStateCharacteristic = lockService.useCharacteristic<number>(Homebridge.Characteristics.LockTargetState);
         this.lockTargetStateCharacteristic.valueChanged = async newValue => {
-            
-            // Starts the operation
-            this.isOperating = true;
 
             // Checks if the operation is unsecured or secured
             if (newValue === Homebridge.Characteristics.LockTargetState.UNSECURED) {
                 if (this.lockCurrentStateCharacteristic.value === Homebridge.Characteristics.LockCurrentState.SECURED) {
-                
+                    
+                    // Checks if unlocking is enabled
+                    if (this.deviceConfiguration.disableUnlock) {
+                        setTimeout(() => {
+                            this.lockTargetStateCharacteristic.value = Homebridge.Characteristics.LockTargetState.SECURED;
+                        }, 500);
+                        return;
+                    }
+
+                    // Starts the operation
+                    this.isOperating = true;
+                    
                     // Sets the target state of the unlatch switch to unsecured, as both should be displayed as open
                     if (this.lock.deviceSettings && this.lock.deviceSettings.pullSpringEnabled && this.lock.deviceSettings.autoPullSpringEnabled && this.latchTargetStateCharacteristic) {
                         this.latchTargetStateCharacteristic.value = Homebridge.Characteristics.LockCurrentState.UNSECURED;
@@ -67,6 +75,14 @@ export class TedeeLockController {
                 } else {
                     if (deviceConfiguration.unlatchFromUnlockedToUnlocked && this.lock.deviceSettings && this.lock.deviceSettings.pullSpringEnabled) {
 
+                        // Checks if unlocking is enabled
+                        if (this.deviceConfiguration.disableUnlock) {
+                            return;
+                        }
+                        
+                        // Starts the operation
+                        this.isOperating = true;
+                        
                         // Sets the target state of the unlatch switch to unsecured, as both should be displayed as open
                         if (this.latchTargetStateCharacteristic) {
                             this.latchTargetStateCharacteristic.value = Homebridge.Characteristics.LockCurrentState.UNSECURED;
@@ -95,6 +111,9 @@ export class TedeeLockController {
                     }
                 }
             } else {
+                    
+                // Starts the operation
+                this.isOperating = true;
                 
                 // Sends the close command to the API
                 platform.logger.info(`[${deviceConfiguration.name}] Close via HomeKit requested.`);
@@ -134,12 +153,18 @@ export class TedeeLockController {
                     }, 500);
                     return;
                 }
-
-                // Starts the operation
-                this.isOperating = true;
                 
                 // Checks if the operation is unsecured, as the latch cannot be secured
                 if (newValue !== Homebridge.Characteristics.LockTargetState.UNSECURED) {
+                    return;
+                }
+
+                // Checks if unlocking is enabled
+                if (this.deviceConfiguration.disableUnlock) {
+                    setTimeout(() => {
+                        this.latchCurrentStateCharacteristic!.value = Homebridge.Characteristics.LockCurrentState.SECURED;
+                        this.latchTargetStateCharacteristic!.value = Homebridge.Characteristics.LockTargetState.SECURED;
+                    }, 500);
                     return;
                 }
 
@@ -151,6 +176,9 @@ export class TedeeLockController {
                     }, 500);
                     return;
                 }
+
+                // Starts the operation
+                this.isOperating = true;
 
                 // Sets the target state of the lock to unsecured, as both should be displayed as open
                 this.lockTargetStateCharacteristic.value = Homebridge.Characteristics.LockTargetState.UNSECURED;

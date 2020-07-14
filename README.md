@@ -32,6 +32,7 @@ npm install -g homebridge-tedee
                     "name": "<DEVICE-NAME>",
                     "unlatchFromUnlockedToUnlocked": false,
                     "unlatchLock": false,
+                    "disableUnlock": false,
                     "defaultLockName": "Lock",
                     "defaultLatchName": "Latch"
                 }
@@ -53,6 +54,8 @@ npm install -g homebridge-tedee
 **unlatchFromUnlockedToUnlocked**: If set to `true`, the door is unlatched when you switch from "unlocked" to "unlocked" in the Home app (this move is valid and works in the Home app, just hold down the switch, swipe it to "locked" and then "unlocked" without releasing your finger - do not release the finger until you reached the "unlocked" position again). If set to `false`, nothing is done when you switch from "unlocked" to "unlocked" in the Home app. Only works if the latch is enabled ("pull spring" in the app).
 
 **unlatchLock**: If set to `true`, a second lock switch is exposed for unlatching the smart lock. Only works if the latch is enabled ("pull spring" in the app).
+
+**disableUnlock**: If set to `true`, you cannot unlock via HomeKit, only lock actions are executed.
 
 **defaultLockName** (optional): Lets you customize the name of the lock mechanism. Useful for the Alexa plugin, which does not detect changes of service names in HomeKit. Defaults to `Lock`.
 

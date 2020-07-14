@@ -48,6 +48,13 @@
                             "required": true,
                             "description": "If enabled, a second lock switch is exposed for unlatching the smart lock. Only works if the latch is enabled ('pull spring' in the app)."
                         },
+                        "disableUnlock": {
+                            "title": "Disable unlock",
+                            "type": "boolean",
+                            "default": false,
+                            "required": false,
+                            "description": "If enabled, you cannot unlock via HomeKit, only lock actions are executed."
+                        },
                         "defaultLockName": {
                             "title": "Default lock name",
                             "type": "string",
