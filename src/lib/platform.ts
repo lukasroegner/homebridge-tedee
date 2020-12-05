@@ -88,7 +88,7 @@ export class Platform extends HomebridgePlatform<Configuration> {
         this.configuration.tokenUri = 'https://tedee.b2clogin.com/tedee.onmicrosoft.com/oauth2/v2.0/token?p=B2C_1_SignIn_Ropc';
         this.configuration.maximumTokenRetry = 3;
         this.configuration.tokenRetryInterval = 2000;
-        this.configuration.apiUri = 'https://api.tedee.com/api/v1.9';
+        this.configuration.apiUri = 'https://api.tedee.com/api/v1.15';
         this.configuration.maximumApiRetry = 3;
         this.configuration.apiRetryInterval = 5000;
         this.configuration.updateInterval = this.configuration.updateInterval || 30;
