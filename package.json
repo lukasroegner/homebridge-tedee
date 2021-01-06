@@ -23,7 +23,7 @@
   },
   "dependencies": {
     "homebridge-framework": "1.0.6",
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "qs": "6.9.4"
   },
   "bugs": {
