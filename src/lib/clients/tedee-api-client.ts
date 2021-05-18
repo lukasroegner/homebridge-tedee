@@ -175,9 +175,10 @@ export class TedeeApiClient {
     /**
      * Opens the lock with the specified ID.
      * @param id The ID of the lock.
+     * @param forceOpen Determines whether the lock should be forced to open.
      * @param retryCount The number of retries before reporting failure.
      */
-    public async openAsync(id: number, retryCount?: number): Promise<void> {
+    public async openAsync(id: number, forceOpen: boolean, retryCount?: number): Promise<void> {
 
         // Gets the corresponding lock
         const lock = this.platform.locks.find(l => l.id === id);
@@ -197,7 +198,7 @@ export class TedeeApiClient {
 
         // Sends the HTTP request to set the box status
         try {
-            await axios.post(`${this.platform.configuration.apiUri}/my/lock/open`, { deviceId: id, openParameter: 2 }, { 
+            await axios.post(`${this.platform.configuration.apiUri}/my/lock/open`, { deviceId: id, openParameter: forceOpen ? 2 : 1 }, { 
                 headers: {
                     Authorization: `Bearer ${accessToken}`
                 } 
@@ -210,7 +211,7 @@ export class TedeeApiClient {
             retryCount--;
             if (retryCount > 0) {
                 await new Promise(resolve => setTimeout(resolve, this.platform.configuration.apiRetryInterval));
-                await this.openAsync(id, retryCount);
+                await this.openAsync(id, forceOpen, retryCount);
             } else {
                 throw e;
             }

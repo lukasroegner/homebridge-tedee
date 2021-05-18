@@ -68,12 +68,12 @@ export class TedeeLockController {
                     // If the locked should be unlatched from locked to unlocked, the pull spring command has to be sent
                     if (this.lock.deviceSettings && this.lock.deviceSettings.pullSpringEnabled && deviceConfiguration.unlatchFromLockedToUnlocked) {
                         
-                        if (this.lock.lockProperties.state === 3) {
+                        if (this.lock.lockProperties.state === 3 || this.lock.lockProperties.state === 6) {
 
                             // Sends the open command to the API
                             platform.logger.info(`[${deviceConfiguration.name}] Open via HomeKit requested.`);
                             try {
-                                await platform.apiClient.openAsync(this.lock.id);
+                                await platform.apiClient.openAsync(this.lock.id, true);
                             } catch (e) {
                                 platform.logger.warn(`[${deviceConfiguration.name}] Failed to open via HomeKit`);
                             }
@@ -92,7 +92,7 @@ export class TedeeLockController {
                         // Sends the open command to the API
                         platform.logger.info(`[${deviceConfiguration.name}] Open via HomeKit requested.`);
                         try {
-                            await platform.apiClient.openAsync(this.lock.id);
+                            await platform.apiClient.openAsync(this.lock.id, true);
                         } catch (e) {
                             platform.logger.warn(`[${deviceConfiguration.name}] Failed to open via HomeKit`);
                         }
@@ -119,7 +119,7 @@ export class TedeeLockController {
                             // Sends the open command to the API
                             platform.logger.info(`[${deviceConfiguration.name}] Open via HomeKit requested.`);
                             try {
-                                await platform.apiClient.openAsync(this.lock.id);
+                                await platform.apiClient.openAsync(this.lock.id, true);
                             } catch (e) {
                                 platform.logger.warn(`[${deviceConfiguration.name}] Failed to open via HomeKit`);
                             }
@@ -214,7 +214,7 @@ export class TedeeLockController {
                     // Sends the open command to the API
                     platform.logger.info(`[${deviceConfiguration.name}] Open via HomeKit requested.`);
                     try {
-                        await platform.apiClient.openAsync(this.lock.id);
+                        await platform.apiClient.openAsync(this.lock.id, true);
                     } catch (e) {
                         platform.logger.warn(`[${deviceConfiguration.name}] Failed to open via HomeKit`);
                     }
