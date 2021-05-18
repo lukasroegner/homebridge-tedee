@@ -61,16 +61,41 @@ export class TedeeLockController {
                     this.isOperating = true;
                     
                     // Sets the target state of the unlatch switch to unsecured, as both should be displayed as open
-                    if (this.lock.deviceSettings && this.lock.deviceSettings.pullSpringEnabled && this.lock.deviceSettings.autoPullSpringEnabled && this.latchTargetStateCharacteristic) {
+                    if (this.lock.deviceSettings && this.lock.deviceSettings.pullSpringEnabled && deviceConfiguration.unlatchFromLockedToUnlocked && this.latchTargetStateCharacteristic) {
                         this.latchTargetStateCharacteristic.value = Homebridge.Characteristics.LockCurrentState.UNSECURED;
                     }
 
-                    // Sends the open command to the API
-                    platform.logger.info(`[${deviceConfiguration.name}] Open via HomeKit requested.`);
-                    try {
-                        await platform.apiClient.openAsync(this.lock.id);
-                    } catch (e) {
-                        platform.logger.warn(`[${deviceConfiguration.name}] Failed to open via HomeKit`);
+                    // If the locked should be unlatched from locked to unlocked, the pull spring command has to be sent
+                    if (this.lock.deviceSettings && this.lock.deviceSettings.pullSpringEnabled && deviceConfiguration.unlatchFromLockedToUnlocked) {
+                        
+                        if (this.lock.lockProperties.state === 3) {
+
+                            // Sends the open command to the API
+                            platform.logger.info(`[${deviceConfiguration.name}] Open via HomeKit requested.`);
+                            try {
+                                await platform.apiClient.openAsync(this.lock.id);
+                            } catch (e) {
+                                platform.logger.warn(`[${deviceConfiguration.name}] Failed to open via HomeKit`);
+                            }
+                        } else {
+
+                            // Sends the pull spring command to the API
+                            platform.logger.info(`[${deviceConfiguration.name}] Pull spring via HomeKit requested.`);
+                            try {
+                                await platform.apiClient.pullSpringAsync(this.lock.id);
+                            } catch (e) {
+                                platform.logger.warn(`[${deviceConfiguration.name}] Pull spring via HomeKit`);
+                            }
+                        }
+                    } else {
+
+                        // Sends the open command to the API
+                        platform.logger.info(`[${deviceConfiguration.name}] Open via HomeKit requested.`);
+                        try {
+                            await platform.apiClient.openAsync(this.lock.id);
+                        } catch (e) {
+                            platform.logger.warn(`[${deviceConfiguration.name}] Failed to open via HomeKit`);
+                        }
                     }
                 } else {
                     if (deviceConfiguration.unlatchFromUnlockedToUnlocked && this.lock.deviceSettings && this.lock.deviceSettings.pullSpringEnabled) {
