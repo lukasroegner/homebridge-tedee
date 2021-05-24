@@ -34,13 +34,6 @@
                             "placeholder": "Device name from the app",
                             "description": "The name of the lock. This name has to match the name that is configured in the Tedee app."
                         },
-                        "unlatchFromLockedToUnlocked": {
-                            "title": "Unlatch (locked to unlocked)",
-                            "type": "boolean",
-                            "default": false,
-                            "required": true,
-                            "description": "If enabled, the door is unlatched when you switch from 'locked' to 'unlocked' in the Home app. If disabled, the door is only unlocked, not unlatched. Only works if the latch is enabled ('pull spring' in the app)."
-                        },
                         "unlatchFromUnlockedToUnlocked": {
                             "title": "Unlatch (unlocked to unlocked)",
                             "type": "boolean",
@@ -82,8 +75,8 @@
             "updateInterval": {
                 "title": "Update Interval",
                 "type": "integer",
-                "default": 30,
-                "placeholder": "30",
+                "default": 15,
+                "placeholder": "15",
                 "description": "The interval in seconds at which the lock state is updated from the API."
             }
         }

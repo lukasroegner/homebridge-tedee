@@ -10,11 +10,6 @@ export interface DeviceConfiguration {
     name: string;
 
     /**
-     * Gets or sets a value that determines whether the unlatch (locked to unlocked) is enabled.
-     */
-    unlatchFromLockedToUnlocked: boolean;
-
-    /**
      * Gets or sets a value that determines whether the unlatch (unlocked to unlocked) is enabled.
      */
     unlatchFromUnlockedToUnlocked: boolean;

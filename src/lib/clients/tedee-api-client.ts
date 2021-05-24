@@ -6,6 +6,11 @@ import { Platform } from '../platform';
 import { TokenResponse } from './models/token-response';
 import { Lock } from './models/lock';
 import { LocksResponse } from './models/locks-response';
+import { LockSync } from './models/lock-sync';
+import { LocksSyncResponse } from './models/locks-sync-response';
+import { LockSyncResponse } from './models/lock-sync-response';
+import { OperationResponse } from './models/operation-response';
+import { OperationStatus } from './models/operation-status';
 
 /**
  * Represents a client that communicates with the Tedee HTTP API.
@@ -128,6 +133,85 @@ export class TedeeApiClient {
     }
 
     /**
+     * Syncs the recent changes of all locks from the API.
+     * @param retryCount The number of retries before reporting failure.
+     */
+    public async syncLocksAsync(retryCount?: number): Promise<Array<LockSync>> {
+        this.platform.logger.debug(`Syncing locks from API...`);
+
+        // Set the default retry count
+        if (!retryCount) {
+            retryCount = this.platform.configuration.maximumApiRetry;
+        }
+
+        // Gets the access token
+        const accessToken = await this.getAccessTokenAsync();
+
+        // Sends the HTTP request to sync the locks
+        try {
+            const response = await axios.get<LocksSyncResponse>(`${this.platform.configuration.apiUri}/my/lock/sync`, { 
+                headers: {
+                    Authorization: `Bearer ${accessToken}`
+                } 
+            });
+            this.platform.logger.debug(JSON.stringify(response.data));
+            this.platform.logger.debug(`Locks synced from API.`);
+            return response.data.result;
+        } catch (e) {
+            this.platform.logger.warn(`Error while syncing locks from API: ${e}`);
+
+            // Decreased the retry count and tries again
+            retryCount--;
+            if (retryCount > 0) {
+                await new Promise(resolve => setTimeout(resolve, this.platform.configuration.apiRetryInterval));
+                return await this.syncLocksAsync(retryCount);
+            } else {
+                throw e;
+            }
+        }
+    }
+
+    /**
+     * Syncs the recent changes of a single lock from the API.
+     * @param id The ID of the lock.
+     * @param retryCount The number of retries before reporting failure.
+     */
+    public async syncLockAsync(id: number, retryCount?: number): Promise<LockSync> {
+        this.platform.logger.debug(`Syncing lock with ID ${id} from API...`);
+
+        // Set the default retry count
+        if (!retryCount) {
+            retryCount = this.platform.configuration.maximumApiRetry;
+        }
+
+        // Gets the access token
+        const accessToken = await this.getAccessTokenAsync();
+
+        // Sends the HTTP request to sync the locks
+        try {
+            const response = await axios.get<LockSyncResponse>(`${this.platform.configuration.apiUri}/my/lock/${id}/sync`, { 
+                headers: {
+                    Authorization: `Bearer ${accessToken}`
+                } 
+            });
+            this.platform.logger.debug(JSON.stringify(response.data));
+            this.platform.logger.debug(`Lock with ID ${id} synced from API.`);
+            return response.data.result;
+        } catch (e) {
+            this.platform.logger.warn(`Error while syncing lock with ID ${id} from API: ${e}`);
+
+            // Decreased the retry count and tries again
+            retryCount--;
+            if (retryCount > 0) {
+                await new Promise(resolve => setTimeout(resolve, this.platform.configuration.apiRetryInterval));
+                return await this.syncLockAsync(id, retryCount);
+            } else {
+                throw e;
+            }
+        }
+    }
+
+    /**
      * Closes the lock with the specified ID.
      * @param id The ID of the lock.
      * @param retryCount The number of retries before reporting failure.
@@ -152,11 +236,27 @@ export class TedeeApiClient {
 
         // Sends the HTTP request to set the box status
         try {
-            await axios.post(`${this.platform.configuration.apiUri}/my/lock/close`, { deviceId: id }, { 
+            let response = await axios.post<OperationResponse>(`${this.platform.configuration.apiUri}/my/lock/close`, { deviceId: id }, { 
                 headers: {
                     Authorization: `Bearer ${accessToken}`
                 } 
             });
+            this.platform.logger.debug(JSON.stringify(response.data));
+
+            // Waits for the operation to complete
+            while (response.data.result.status !== OperationStatus.Completed) {
+                await new Promise<void>(r => setTimeout(() => r(), 1000));
+
+                response = await axios.get<OperationResponse>(`${this.platform.configuration.apiUri}/my/device/operation/${response.data.result.operationId}`, { 
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`
+                    } 
+                });
+
+                this.platform.logger.debug(JSON.stringify(response.data));
+                this.platform.logger.info(`[${lock.name}] Waiting for close operation to be completed.`);
+            }
+
             this.platform.logger.info(`[${lock.name}] Closed via API.`);
         } catch (e) {
             this.platform.logger.warn(`[${lock.name}] Error while closing via API: ${e}`);
@@ -175,10 +275,9 @@ export class TedeeApiClient {
     /**
      * Opens the lock with the specified ID.
      * @param id The ID of the lock.
-     * @param forceOpen Determines whether the lock should be forced to open.
      * @param retryCount The number of retries before reporting failure.
      */
-    public async openAsync(id: number, forceOpen: boolean, retryCount?: number): Promise<void> {
+    public async openAsync(id: number, retryCount?: number): Promise<void> {
 
         // Gets the corresponding lock
         const lock = this.platform.locks.find(l => l.id === id);
@@ -198,11 +297,27 @@ export class TedeeApiClient {
 
         // Sends the HTTP request to set the box status
         try {
-            await axios.post(`${this.platform.configuration.apiUri}/my/lock/open`, { deviceId: id, openParameter: forceOpen ? 2 : 1 }, { 
+            let response = await axios.post<OperationResponse>(`${this.platform.configuration.apiUri}/my/lock/open`, { deviceId: id }, { 
                 headers: {
                     Authorization: `Bearer ${accessToken}`
                 } 
             });
+            this.platform.logger.debug(JSON.stringify(response.data));
+
+            // Waits for the operation to complete
+            while (response.data.result.status !== OperationStatus.Completed) {
+                await new Promise<void>(r => setTimeout(() => r(), 1000));
+
+                response = await axios.get<OperationResponse>(`${this.platform.configuration.apiUri}/my/device/operation/${response.data.result.operationId}`, { 
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`
+                    } 
+                });
+
+                this.platform.logger.debug(JSON.stringify(response.data));
+                this.platform.logger.info(`[${lock.name}] Waiting for open operation to be completed.`);
+            }
+
             this.platform.logger.info(`[${lock.name}] Opened via API.`);
         } catch (e) {
             this.platform.logger.warn(`[${lock.name}] Error while opening via API: ${e}`);
@@ -211,7 +326,7 @@ export class TedeeApiClient {
             retryCount--;
             if (retryCount > 0) {
                 await new Promise(resolve => setTimeout(resolve, this.platform.configuration.apiRetryInterval));
-                await this.openAsync(id, forceOpen, retryCount);
+                await this.openAsync(id, retryCount);
             } else {
                 throw e;
             }
@@ -243,11 +358,27 @@ export class TedeeApiClient {
 
         // Sends the HTTP request to set the box status
         try {
-            await axios.post(`${this.platform.configuration.apiUri}/my/lock/pull-spring`, { deviceId: id }, { 
+            let response = await axios.post<OperationResponse>(`${this.platform.configuration.apiUri}/my/lock/pull-spring`, { deviceId: id }, { 
                 headers: {
                     Authorization: `Bearer ${accessToken}`
                 } 
             });
+            this.platform.logger.debug(JSON.stringify(response.data));
+
+            // Waits for the operation to complete
+            while (response.data.result.status !== OperationStatus.Completed) {
+                await new Promise<void>(r => setTimeout(() => r(), 1000));
+
+                response = await axios.get<OperationResponse>(`${this.platform.configuration.apiUri}/my/device/operation/${response.data.result.operationId}`, { 
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`
+                    } 
+                });
+
+                this.platform.logger.debug(JSON.stringify(response.data));
+                this.platform.logger.info(`[${lock.name}] Waiting for pull spring operation to be completed.`);
+            }
+
             this.platform.logger.info(`[${lock.name}] Pulled spring via API.`);
         } catch (e) {
             this.platform.logger.warn(`[${lock.name}] Error while pulling spring via API: ${e}`);

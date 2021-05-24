@@ -59,22 +59,27 @@ export class Platform extends HomebridgePlatform<Configuration> {
      */
     public async updateAsync() {
         try {
-            this.logger.debug(`Get locks from the API...`);
+            this.logger.debug('Syncing locks from the API...');
 
-            // Gets the locks from the API
-            this.locks = await this.apiClient.getLocksAsync();
+            // Gets sync information for all locks from the API
+            const lockSyncs = await this.apiClient.syncLocksAsync();
 
             // Updates the locks
             for (let controller of this.controllers) {
                 const lock = this.locks.find(l => l.name === controller.name);
                 if (lock) {
-                    controller.update(lock);
+
+                    // Gets the sync information for the lock (via ID)
+                    const lockSync = lockSyncs.find(s => s.id == lock.id);
+                    if (lockSync) {
+                        controller.update(lockSync);
+                    }
                 }
             }
 
-            this.logger.debug(`Locks updated from the API.`);
+            this.logger.debug('Locks synced from the API.');
         } catch (e) {
-            this.logger.warn('Failed to get locks from API and start background updates.');
+            this.logger.warn('Failed to sync locks from API.');
         }
     }
 
@@ -88,10 +93,15 @@ export class Platform extends HomebridgePlatform<Configuration> {
         this.configuration.tokenUri = 'https://tedee.b2clogin.com/tedee.onmicrosoft.com/oauth2/v2.0/token?p=B2C_1_SignIn_Ropc';
         this.configuration.maximumTokenRetry = 3;
         this.configuration.tokenRetryInterval = 2000;
-        this.configuration.apiUri = 'https://api.tedee.com/api/v1.15';
+        this.configuration.apiUri = 'https://api.tedee.com/api/v1.18';
         this.configuration.maximumApiRetry = 3;
         this.configuration.apiRetryInterval = 5000;
-        this.configuration.updateInterval = this.configuration.updateInterval || 30;
+        this.configuration.updateInterval = this.configuration.updateInterval || 15;
+
+        // As per documentation, the update interval should not be below 10 seconds
+        if (this.configuration.updateInterval < 10) {
+            this.configuration.updateInterval = 10;
+        }
 
         // Initializes the client
         this._apiClient = new TedeeApiClient(this);
