@@ -37,7 +37,8 @@ npm install -g homebridge-tedee
                     "defaultLatchName": "Latch"
                 }
             ],
-            "updateInterval": 15
+            "updateInterval": 15,
+            "maximumApiRetry": 3
         }
     ]
 }
@@ -62,6 +63,8 @@ npm install -g homebridge-tedee
 **defaultLatchName** (optional): Lets you customize the name of the unlatch mechanism. Useful for the Alexa plugin, which does not detect changes of service names in HomeKit. Defaults to `Latch`.
 
 **updateInterval**: The interval in seconds at which the lock state is updated from the API. Defaults to `15` seconds.
+
+**maximumApiRetry**: The amount of attempts to call the Tedee API. Useful if you do not want to repeat failed lock/unlock/unlatch attempts after a long timeout delay. Defaults to `3` attempts (incl. initial one).
 
 ## Usage
 

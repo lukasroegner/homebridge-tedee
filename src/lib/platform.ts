@@ -94,7 +94,7 @@ export class Platform extends HomebridgePlatform<Configuration> {
         this.configuration.maximumTokenRetry = 3;
         this.configuration.tokenRetryInterval = 2000;
         this.configuration.apiUri = 'https://api.tedee.com/api/v1.18';
-        this.configuration.maximumApiRetry = 3;
+        this.configuration.maximumApiRetry = this.configuration.maximumApiRetry || 3;
         this.configuration.apiRetryInterval = 5000;
         this.configuration.updateInterval = this.configuration.updateInterval || 15;
 

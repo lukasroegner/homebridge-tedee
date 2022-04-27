@@ -78,6 +78,13 @@
                 "default": 15,
                 "placeholder": "15",
                 "description": "The interval in seconds at which the lock state is updated from the API."
+            },
+            "maximumApiRetry": {
+                "title": "Maximum amount of retries",
+                "type": "integer",
+                "default": 3,
+                "placeholder": 3,
+                "description": "The amount of attempts to call the Tedee API. Useful if you do not want to repeat failed lock/unlock/unlatch attempts after a long timeout delay."
             }
         }
     }
