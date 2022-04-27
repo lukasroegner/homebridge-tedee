@@ -1,6 +1,6 @@
 {
   "name": "homebridge-tedee",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "author": "Lukas Rögner",
   "homepage": "https://github.com/lukasroegner/homebridge-tedee",
   "description": "Homebridge plugin for the smart lock Tedee.",

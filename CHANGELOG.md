@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.1] - 2022-04-27
+### Changes
+- Made maximum retry for API calls configurable (thanks to MobileManiC for the PR)
+
 ## [0.4.0] - 2021-05-24
 ### Changes
 - Reverting changes of 0.3.0 and 0.3.1 as the additional configuration does not work with Tedee
