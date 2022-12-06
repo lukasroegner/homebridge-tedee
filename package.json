@@ -24,7 +24,7 @@
   "dependencies": {
     "homebridge-framework": "1.0.6",
     "axios": "0.21.1",
-    "qs": "6.10.1"
+    "qs": "6.10.3"
   },
   "bugs": {
     "url": "https://github.com/lukasroegner/homebridge-tedee/issues"
