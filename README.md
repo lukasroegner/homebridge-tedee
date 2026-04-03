@@ -1,6 +1,12 @@
 
 # Homebridge Tedee Plugin
 
+## ⚠️ Deprecation notice - plugin archived
+
+This plugin will no longer be maintained. Take a look at [homebridge-tedee-bridge](https://github.com/lpostiglione/homebridge-tedee-bridge) from [Luca Postiglione](https://github.com/lpostiglione), which is a homebridge plugin that uses the local API of the Tedee bridge.
+
+## General Information
+
 This project is a homebridge plugin for Tedee smart locks.
 The Tedee bridge is required for this plugin to work.
 
